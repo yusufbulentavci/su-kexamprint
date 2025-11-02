@@ -1,0 +1,43 @@
+--@depends:
+
+-- Question Assignments - assigns questions from vg12526.tarama to student seats
+--@TABLE
+CREATE TABLE kexamprint.question_assignments (
+    id SERIAL PRIMARY KEY,
+    placement_id INTEGER NOT NULL,
+    student_id INTEGER NOT NULL,
+    room_code VARCHAR(50) NOT NULL,
+    exam_code VARCHAR(50) NOT NULL,
+    curriculum_language VARCHAR(10) NOT NULL,
+    tarama_question_id TEXT NOT NULL,
+    session_key TEXT NOT NULL,
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_student_question UNIQUE (placement_id, student_id),
+    CONSTRAINT uq_session_question UNIQUE (session_key, tarama_question_id)
+);
+--@END
+
+--@INDEX
+CREATE INDEX idx_question_assign_placement ON kexamprint.question_assignments(placement_id);
+--@END
+
+--@INDEX
+CREATE INDEX idx_question_assign_student ON kexamprint.question_assignments(student_id);
+--@END
+
+--@INDEX
+CREATE INDEX idx_question_assign_session ON kexamprint.question_assignments(session_key);
+--@END
+
+--@INDEX
+CREATE INDEX idx_question_assign_tarama ON kexamprint.question_assignments(tarama_question_id);
+--@END
+
+COMMENT ON TABLE kexamprint.question_assignments IS 'Assigns questions from vg12526.tarama to student seats';
+COMMENT ON COLUMN kexamprint.question_assignments.placement_id IS 'Reference to kexam.exam_placements.id';
+COMMENT ON COLUMN kexamprint.question_assignments.student_id IS 'Reference to kexam.students.student_id';
+COMMENT ON COLUMN kexamprint.question_assignments.room_code IS 'Room code from kexam.written_exam_student_rooms';
+COMMENT ON COLUMN kexamprint.question_assignments.exam_code IS 'Exam/course code (derskodu)';
+COMMENT ON COLUMN kexamprint.question_assignments.curriculum_language IS 'Curriculum language (dersdili)';
+COMMENT ON COLUMN kexamprint.question_assignments.tarama_question_id IS 'Question ID from vg12526.tarama.id (note: not unique in tarama, one question can have multiple image rows)';
+COMMENT ON COLUMN kexamprint.question_assignments.session_key IS 'Session key to prevent duplicate questions in same session (exam+room+time+date)';

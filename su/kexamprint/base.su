@@ -1,0 +1,5 @@
+--@DEPENDS:base
+
+--@SCHEMA
+create schema kexamprint;
+--@END
